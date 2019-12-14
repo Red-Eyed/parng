@@ -393,7 +393,7 @@ impl Predictor {
         debug_assert!([8, 16, 24, 32].contains(&color_depth));
 
         let accelerated_implementation = match (self, color_depth, stride) {
-            (Predictor::None, 32, 4) => Some(parng_predict_scanline_none_packed_32bpp),
+            (Predictor::None, 32, 4) => Some(_parng_predict_scanline_none_packed_32bpp),
             // (Predictor::None, 32, _) => Some(parng_predict_scanline_none_strided_32bpp),
             // (Predictor::None, 24, 4) => Some(parng_predict_scanline_none_packed_24bpp),
             // (Predictor::None, 24, _) => Some(parng_predict_scanline_none_strided_24bpp),
@@ -532,9 +532,9 @@ fn address_is_properly_aligned(address: usize) -> bool {
     true
 }
 
-#[link(name="parngacceleration")]
+#[link(name="parngacceleration", kind="dylib")]
 extern {
-    fn parng_predict_scanline_none_packed_32bpp(dest: *mut u8,
+    fn _parng_predict_scanline_none_packed_32bpp(dest: *mut u8,
                                                 src: *const u8,
                                                 prev: *const u8,
                                                 length: u64,

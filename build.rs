@@ -60,9 +60,20 @@ fn assemble(out_path: &str, in_path: &str) {
 
 fn main() {
     let out_dir = env::var("OUT_DIR").unwrap();
-
     let predict_o = format!("{}/{}", out_dir, PREDICTION_OBJ);
+
     assemble(&predict_o, PREDICTION_SOURCE);
 
-    Config::new().object(&predict_o).compile("libparngacceleration.a")
+    // Config::new().object(&predict_o).compile("libparngacceleration.a");
+    Command::new(&format!("gcc")).arg("--shared")
+                                 .arg("-o")
+                                 .arg(&format!("{}/libparngacceleration.so", &out_dir))
+                                 .arg(&predict_o)
+                                 .status()
+                                 .unwrap();
+
+    println!("cargo:rustc-link-search={}", out_dir);    // the "-L" flag
+    println!("cargo:rustc-link-lib=parngacceleration"); // the "-l" flag
+    println!("rustc-flags='-C link-arg=-Wl,-rpath=.'")
+
 }
