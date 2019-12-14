@@ -48,6 +48,16 @@ fn assemble(out_path: &str, in_path: &str) {
                                 .unwrap();
 }
 
+#[cfg(all(target_arch="x86_64", target_os="linux"))]
+fn assemble(out_path: &str, in_path: &str) {
+    Command::new(&format!("nasm")).arg("-f").arg("elf64")
+                                  .arg("--prefix").arg("_")
+                                  .arg("-o").arg(out_path)
+                                  .arg(in_path)
+                                  .status()
+                                  .unwrap();
+}
+
 fn main() {
     let out_dir = env::var("OUT_DIR").unwrap();
 
@@ -56,4 +66,3 @@ fn main() {
 
     Config::new().object(&predict_o).compile("libparngacceleration.a")
 }
-
